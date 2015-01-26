@@ -17,6 +17,14 @@ var Surreal = (function () {
     return i;
   }
 
+  // Recursively flip the halves of a number, to switch its sign
+  var flip = function(n) {
+    if (! n.length) {
+      return n;
+    }
+    return [ flip(n[1]), flip(n[0]) ];
+  }
+
   // Construct a new surreal number by passing in either:
   //   - a real
   //   - nothing
@@ -76,6 +84,7 @@ var Surreal = (function () {
 
 
   // Comparisons.
+
   Surreal.prototype.isEqualTo = function (other) {
     return this.isLessThanOrEqualTo(other) && this.isGreaterThanOrEqualTo(other);
   };
@@ -126,6 +135,80 @@ var Surreal = (function () {
     return ! this.isLessThanOrEqualTo(other);
   };
 
+
+  // Operations. All operations are immutable and return new Surreal objects.
+
+  Surreal.prototype.negate = function () {
+    return new Surreal(flip(this.value));
+  };
+
+  Surreal.prototype.add = function (other) {
+    var first = new Surreal(this);
+    var second = new Surreal(other);
+    var isPositive = second.isPositive();
+    var firstAlter = isPositive ? 'increment' : 'decrement';
+    var secondAlter = isPositive ? 'decrement' : 'increment';
+    if (! second.isZero()) {
+      while (! second.isZero()) {
+        first[firstAlter]();
+        second[secondAlter]();
+      }
+    }
+    return first;
+  };
+
+  Surreal.prototype.subtract = function (other) {
+    return (new Surreal(other)).negate().add(this);
+  };
+
+  Surreal.prototype.multiply = function (other) {
+    var first = this;
+    var second = new Surreal(other);
+    if (first.isZero() || second.isZero()) {
+      return new Surreal(Surreal.zero());
+    }
+    var isPositive = second.isPositive();
+    var alter = isPositive ? 'decrement' : 'increment';
+    second[alter]();
+    while (! second.isZero()) {
+      first = first.add(this);
+      second[alter]();
+    }
+    return isPositive ? first : first.negate();
+  };
+
+  Surreal.prototype.divide = function (other) {
+    var first = new Surreal(this);
+    var second = new Surreal(other);
+    var iter = new Surreal(Surreal.zero());
+    var count = new Surreal(Surreal.zero());
+    if (first.isZero()) {
+      return count;
+    }
+    if (second.isZero()) {
+      throw 'Divide by zero error';
+    }
+    var negateResult = (first.isPositive() && second.isNegative()) || (first.isNegative() && second.isPositive());
+    if (first.isNegative()) {
+      first = first.negate();
+    }
+    if (second.isNegative()) {
+      second = second.negate();
+    }
+    while (first.isGreaterThan(iter)) {
+      iter = iter.add(second);
+      count.increment();
+    }
+    if (first.isEqualTo(iter)) {
+      return negateResult ? count.negate() : count;
+    }
+    // Not a neat division. It's in the Too Hard Basket for now.
+    throw 'Fractions are hard';
+  };
+
+
+  // Conversions.
+
   Surreal.fromReal = function (real) {
     var surreal = new Surreal(Surreal.zero());
     if (real === 0) {
@@ -157,6 +240,18 @@ var Surreal = (function () {
       }
     }
     return i;
+  };
+
+  Surreal.prototype.valueOf = Surreal.prototype.toReal;
+
+  Surreal.prototype.toString = function () {
+    var walk = function (n) {
+      if (!n.length) {
+        return '[]';
+      }
+      return '[' + walk(n[0]) + ',' + walk(n[1]) + ']';
+    };
+    return walk(this.value);
   };
 
   return Surreal;
