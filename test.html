@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8">
+    <title>Surreal test</title>
+</head>
+<body>
+    <script src="surreal.js"></script>
+    <script>
+    setTimeout(function () {
+        // For playing in the console
+        window.two = new Surreal(2);
+        window.three = new Surreal(3);
+        window.four = new Surreal(4);
+
+
+        // Poor excuse for unit tests
+        console.assert(new Surreal(3).add(0).toReal() === 3);
+        console.assert(new Surreal(3).add(2).toReal() === 5);
+        console.assert(new Surreal(3).add(-2).toReal() === 1);
+        console.assert(new Surreal(3).add(-4).toReal() === -1);
+
+        console.assert(new Surreal(3).subtract(0).toReal() === 3);
+        console.assert(new Surreal(3).subtract(4).toReal() === -1);
+        console.assert(new Surreal(3).subtract(-4).toReal() === 7);
+
+        console.assert(new Surreal(3).multiply(2).toReal() === 6);
+        console.assert(new Surreal(3).multiply(5).toReal() === 15);
+        console.assert(new Surreal(3).multiply(-2).toReal() === -6);
+        console.assert(new Surreal(-3).multiply(2).toReal() === -6);
+        console.assert(new Surreal(-3).multiply(-3).toReal() === 9);
+        console.assert(new Surreal(3).multiply(0).toReal() === 0);
+        console.assert(new Surreal(0).multiply(1e4).toReal() === 0);
+
+        // return;
+        console.assert(new Surreal(0).divide(3).toReal() === 0);
+        console.assert(new Surreal(10).divide(2).toReal() === 5);
+        console.assert(new Surreal(10).divide(5).toReal() === 2);
+        console.assert(new Surreal(12).divide(-3).toReal() === -4);
+        console.assert(new Surreal(-12).divide(3).toReal() === -4);
+        console.assert(new Surreal(-12).divide(-3).toReal() === 4);
+        var err = '';
+        try {
+            new Surreal(12).divide(5);
+        } catch (e) {
+            err = e;
+        }
+        console.assert(err === 'Fractions are hard');
+        err = '';
+        try {
+            new Surreal(3).divide(6);
+        } catch (e) {
+            err = e;
+        }
+        console.assert(err === 'Fractions are hard');
+        err = '';
+        try {
+            new Surreal(12).divide(0);
+        } catch (e) {
+            err = e;
+        }
+        console.assert(err === 'Divide by zero error');
+
+        document.body.appendChild(document.createTextNode('Done'));
+    });
+    </script>
+</body>
+</html>
