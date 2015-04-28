@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8">
+    <title>Surreal test</title>
+</head>
+<body>
+    <script src="surreal.js"></script>
+    <script src="surreal-object.js"></script>
+    <script>
+    // constants for testing
+    var TOTAL_ITERATIONS = 100,
+        TOTAL_INTS_PER_ITERATION = 20;
+
+    var times = {
+        arrays: {
+            isZero: 0,
+            isEqualTo: 0,
+            isPositive: 0,
+            isNegative: 0,
+            isLessThanOrEqualTo: 0,
+            isLessThan: 0,
+            isGreaterThanOrEqualTo: 0,
+            isGreaterThan: 0,
+            negate: 0,
+            add: 0,
+            subtract: 0,
+            multiply: 0,
+            divide: 0,
+            toReal: 0,
+            toString: 0
+        },
+        objs: {
+            isZero: 0,
+            isEqualTo: 0,
+            isPositive: 0,
+            isNegative: 0,
+            isLessThanOrEqualTo: 0,
+            isLessThan: 0,
+            isGreaterThanOrEqualTo: 0,
+            isGreaterThan: 0,
+            negate: 0,
+            add: 0,
+            subtract: 0,
+            multiply: 0,
+            divide: 0,
+            toReal: 0,
+            toString: 0
+        }
+    };
+
+    function doTest(fn) {
+        for (var i=0; i<TOTAL_ITERATIONS; i++) {
+            for (var j=0; j<TOTAL_INTS_PER_ITERATION; j++) {
+                fn(i,j);
+            }
+        }
+    }
+
+    function runTest(operation, baseType, fn) {
+        var timeStart, timeEnd;
+        timeStart = new Date();
+        doTest(fn);
+        timeEnd = new Date();
+        //console.log(operation + ' with ' + baseType + ' took ' + (timeEnd - timeStart));
+        times[baseType][operation] = timeEnd - timeStart;
+    }
+
+
+    setTimeout(function () {
+
+        // Addition
+        runTest('add', 'arrays', function(i,j) {
+            new Surreal(j).add(i);
+        });
+        runTest('add', 'objs', function(i,j) {
+            new SurrealObject(j).add(i);
+        });
+
+        // Subtraction
+        runTest('subtract', 'arrays', function(i,j) {
+            new Surreal(j).subtract(i);
+        });
+        runTest('subtract', 'objs', function(i,j) {
+            new SurrealObject(j).subtract(i);
+        });
+
+        // multiply
+        runTest('multiply', 'arrays', function(i,j) {
+            new Surreal(j).multiply(i);
+        });
+        runTest('multiply', 'objs', function(i,j) {
+            new SurrealObject(j).multiply(i);
+        });
+
+        // divide
+        runTest('divide', 'arrays', function(i,j) {
+            new Surreal(j*4).divide(2);
+        });
+        runTest('divide', 'objs', function(i,j) {
+            new SurrealObject(j*4).divide(2);
+        });
+
+
+
+        // isZero
+        runTest('isZero', 'arrays', function(i,j) {
+            new Surreal(j).isZero();
+        });
+        runTest('isZero', 'objs', function(i,j) {
+            new SurrealObject(j).isZero();
+        });
+
+
+        // isEqualTo
+        runTest('isEqualTo', 'arrays', function(i,j) {
+            new Surreal(j).isEqualTo(new Surreal(j));
+            new Surreal(j).isEqualTo(new Surreal(i));
+        });
+        runTest('isEqualTo', 'objs', function(i,j) {
+            new SurrealObject(j).isEqualTo(new SurrealObject(j));
+            new SurrealObject(j).isEqualTo(new SurrealObject(i));
+        });
+
+        // isLessThan
+        runTest('isLessThan', 'arrays', function(i,j) {
+            new Surreal(j).isLessThan(new Surreal(j));
+            new Surreal(j).isLessThan(new Surreal(i));
+        });
+        runTest('isLessThan', 'objs', function(i,j) {
+            new SurrealObject(j).isLessThan(new SurrealObject(j));
+            new SurrealObject(j).isLessThan(new SurrealObject(i));
+        });
+
+        // isGreaterThan
+        runTest('isGreaterThan', 'arrays', function(i,j) {
+            new Surreal(j).isGreaterThan(new Surreal(j));
+            new Surreal(j).isGreaterThan(new Surreal(i));
+        });
+        runTest('isGreaterThan', 'objs', function(i,j) {
+            new SurrealObject(j).isGreaterThan(new SurrealObject(j));
+            new SurrealObject(j).isGreaterThan(new SurrealObject(i));
+        });
+
+        // isLessThanOrEqualTo
+        runTest('isLessThanOrEqualTo', 'arrays', function(i,j) {
+            new Surreal(j).isLessThanOrEqualTo(new Surreal(j));
+            new Surreal(j).isLessThanOrEqualTo(new Surreal(i));
+        });
+        runTest('isLessThanOrEqualTo', 'objs', function(i,j) {
+            new SurrealObject(j).isLessThanOrEqualTo(new SurrealObject(j));
+            new SurrealObject(j).isLessThanOrEqualTo(new SurrealObject(i));
+        });
+
+        // isGreaterThanOrEqualTo
+        runTest('isGreaterThanOrEqualTo', 'arrays', function(i,j) {
+            new Surreal(j).isGreaterThanOrEqualTo(new Surreal(j));
+            new Surreal(j).isGreaterThanOrEqualTo(new Surreal(i));
+        });
+        runTest('isGreaterThanOrEqualTo', 'objs', function(i,j) {
+            new SurrealObject(j).isGreaterThanOrEqualTo(new SurrealObject(j));
+            new SurrealObject(j).isGreaterThanOrEqualTo(new SurrealObject(i));
+        });
+
+
+
+
+        // isPositive
+        runTest('isPositive', 'arrays', function(i,j) {
+            new Surreal(j).isPositive();
+        });
+        runTest('isPositive', 'objs', function(i,j) {
+            new SurrealObject(j).isPositive();
+        });
+
+        // isNegative
+        runTest('isNegative', 'arrays', function(i,j) {
+            new Surreal(j).isNegative();
+        });
+        runTest('isNegative', 'objs', function(i,j) {
+            new SurrealObject(j).isNegative();
+        });
+
+
+        // negate
+        runTest('negate', 'arrays', function(i,j) {
+            new Surreal(j).negate();
+        });
+        runTest('negate', 'objs', function(i,j) {
+            new SurrealObject(j).negate();
+        });
+
+        // toString
+        runTest('toString', 'arrays', function(i,j) {
+            new Surreal(j).toString();
+        });
+        runTest('toString', 'objs', function(i,j) {
+            new SurrealObject(j).toString();
+        });
+
+        // toReal
+        runTest('toReal', 'arrays', function(i,j) {
+            new Surreal(j).toReal();
+        });
+        runTest('toReal', 'objs', function(i,j) {
+            new SurrealObject(j).toReal();
+        });
+
+        //console.log(times);
+
+        for (var prop in times.arrays) {
+            if (times.arrays.hasOwnProperty(prop) && times.objs.hasOwnProperty(prop)) {
+                var diff = times.objs[prop] - times.arrays[prop];
+                if (diff == 0) {
+                    console.log("Tied in " + prop + " at " + times.arrays[prop]);
+                }
+                else if (diff > 0) {
+                    console.log("Arrays won " + prop + " by " + diff + "ms / " + (diff/times.objs[prop]) + "%");
+                }
+                else {
+                    console.log("Objects won " + prop + " by " + (-1*diff) + "ms / " + (-1*diff/times.arrays[prop]) + "%");
+                }
+            }
+        }
+
+/*
+        var err = '';
+        try {
+            new Surreal(12).divide(5);
+        } catch (e) {
+            err = e;
+        }
+        console.assert(err === 'Fractions are hard');
+        err = '';
+        try {
+            new Surreal(3).divide(6);
+        } catch (e) {
+            err = e;
+        }
+        console.assert(err === 'Fractions are hard');
+        err = '';
+        try {
+            new Surreal(12).divide(0);
+        } catch (e) {
+            err = e;
+        }
+        console.assert(err === 'Divide by zero error');
+
+        document.body.appendChild(document.createTextNode('Done'));
+*/
+    });
+    </script>
+</body>
+</html>
